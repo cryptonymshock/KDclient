@@ -100,3 +100,41 @@ export const clanFilter = new (function() {
         });
     }
 });
+// 1. Add the new tab label (do this where your tabs are initialized, usually near the top)
+this.tabLabels = ["All", "My Clan", "Combined"];
+
+// 2. Update the handleMouseDown function:
+this.handleMouseDown = (xRelative) => {
+    const tab = Math.floor(xRelative / (this.windowWidth / this.tabLabels.length));
+    if (this.selectedTab !== tab) {
+        this.selectedTab = tab;
+        if (this.selectedTab === 0) this.clearFilter();
+        else if (this.selectedTab === 1) {
+            this.filterByOwnClan();
+            this.setUpdateFlag();
+        }
+        else if (this.selectedTab === 2) {
+            this.filterByCombinedMetric();
+            this.setUpdateFlag();
+        }
+        this.repaintLeaderboard();
+    }
+    return true;
+};
+
+// 3. Add this function somewhere in your clanFilters initialization code:
+this.filterByCombinedMetric = () => {
+    this.playersToInclude = [];
+    const balances = getVar("playerBalances");
+    const territories = getVar("playerTerritories");
+    const playerNames = getVar("rawPlayerNames");
+    const playerIds = Object.keys(playerNames);
+    playerIds.sort((a, b) => {
+        const aCombined = (balances[a] || 0) + (territories[a] || 0);
+        const bCombined = (balances[b] || 0) + (territories[b] || 0);
+        return bCombined - aCombined;
+    });
+    this.playersToInclude = playerIds;
+    this.enabled = true;
+    this.scrollToTop && this.scrollToTop();
+};
