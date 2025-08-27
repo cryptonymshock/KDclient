@@ -86,7 +86,6 @@ export const leaderboardFilter = new (function() {
         this.selectedTab = 0;
         clanFilter.refresh();
     }
-});
 
 export const clanFilter = new (function() {
     this.inOwnClan = new Array(512);
@@ -138,3 +137,4 @@ this.filterByCombinedMetric = () => {
     this.enabled = true;
     this.scrollToTop && this.scrollToTop();
 };
+});
